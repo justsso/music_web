@@ -1,0 +1,30 @@
+.ant-menu-horizontal {
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+.ant-carousel .slick-slide {
+    text-align: center;
+    height: 160px;
+    line-height: 160px;
+    background: #364d79;
+    overflow: hidden;
+}
+
+.ant-carousel .slick-slide h3 {
+    color: #fff;
+}
+
+.ant-carousel .slick-dots li button {
+    background: rgb(240, 240, 240);
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+    width: 16px;
+}
+.ant-carousel {
+    /* margin-top: 10px; */
+}
+
+.ant-layout-footer, .ant-layout-header, .ant-layout-content{
+    background: #fff;
+}
