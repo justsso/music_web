@@ -4,7 +4,7 @@ const rewireLess = require('react-app-rewire-less');
 module.exports = function override(config, env) {
     config = injectBabelPlugin(['import', { libraryName: 'antd', style: true }], config);
     config = rewireLess.withLoaderOptions({
-        modifyVars: { "@primary-color": "rgb(0,54,146)" },
+        modifyVars: { "@primary-color": "rgb(238,79,113)" },
     })(config, env);
     return config;
 };

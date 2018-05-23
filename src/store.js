@@ -1,25 +1,36 @@
-import {combineReducers, createStore, applyMiddleware} from 'redux';
-import thunk from 'redux-thunk';
+// import {combineReducers, createStore, applyMiddleware} from 'redux';
+// import thunk from 'redux-thunk';
 
-import createHistory from 'history/createBrowserHistory'
-import {ConnectedRouter, routerReducer, routerMiddleware, push} from 'react-router-redux'
 
-export const history = createHistory()
-const middleware = routerMiddleware(history)
+// import {ConnectedRouter, routerReducer, routerMiddleware, push} from 'react-router-redux'
 
-const rootReducer = combineReducers({
-  
-  router: routerReducer
-});
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 
-let store = null;
-if (composeEnhancers) {
-    store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk, middleware)));
-} else {
-    store = createStore(rootReducer, applyMiddleware(thunk)
-        , applyMiddleware(middleware)
-    )
-}
+// const rootReducer = combineReducers({
+//   router: routerReducer
+// });
+// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 
-export default store
+// let store = null;
+// if (composeEnhancers) {
+//     store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+// } else {
+//     store = createStore(rootReducer, applyMiddleware(thunk)
+      
+//     )
+// }
+
+// export default store
+
+
+import { createStore } from 'redux';
+import { combineReducers } from 'redux';
+import { routerReducer, routerMiddleware, push} from 'react-router-redux'
+
+
+var reducers = combineReducers({
+    reducer: routerReducer
+})
+
+
+const store = createStore(reducers);
+export default store;

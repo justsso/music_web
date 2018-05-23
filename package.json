@@ -4,6 +4,11 @@
   "private": true,
   "dependencies": {
     "antd": "^3.5.1",
+    "axios": "^0.18.0",
+    "classnames": "^2.2.5",
+    "css-animation": "^1.4.1",
+    "eslint": "^4.19.1",
+    "history": "^4.7.2",
     "less-loader": "^4.1.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
