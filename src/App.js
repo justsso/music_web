@@ -21,7 +21,7 @@ class App extends Component {
         <Router history={history} >
           <Switch>
             
-            <Route path='/' Component={Home} ></Route>
+            <Route path='/jkl' component={Home}  ></Route>
             {/* <Home></Home> */}
           </Switch>
         </Router>
