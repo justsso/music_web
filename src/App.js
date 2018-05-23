@@ -1,28 +1,25 @@
 import React, { Component } from 'react';
 import {
-  BrowserRouter as  Router,
+  HashRouter as  Router,
   Route,
   Link,
   Switch
 } from 'react-router-dom'
-import { Provider } from 'react-redux';
-import Home from './containers/Home/Home';
 import store from './store';
 
+import { Provider } from 'react-redux';
 
+import Home from './containers/Home/Home';
 
-import createHistory from 'history/createBrowserHistory'
-let history = createHistory()
 
 class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <Router history={history} >
+        <Router  >
           <Switch>
-            
-            <Route path='/' Component={Home} ></Route>
-            {/* <Home></Home> */}
+            <Route path='/' component={Home} ></Route>
+            <Home></Home>
           </Switch>
         </Router>
       </Provider>
