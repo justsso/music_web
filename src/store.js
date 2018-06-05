@@ -6,13 +6,47 @@ import { createLogger } from 'redux-logger';
 import {ConnectedRouter, routerReducer, routerMiddleware, push} from 'react-router-redux'
 
 import createHistory from "history/createHashHistory";
+import HomeReducer from './reducers/HomeReducer';
+import UserReducer from './reducers/UserReducer';
+import DetailContentReducer from './reducers/DetailContentReducer';
 export const routerHistory = createHistory();
 const middleware = routerMiddleware(routerHistory);
-
 const loggerMiddleware = createLogger()
 
+
+export const initialState = {
+    home: {
+        newSong: [],
+        hotSong: [],
+        mayBeLike: [],
+        recommendSong: [],
+        PlayMusicList: [],
+        loadingSearch: false
+    },
+    user: {
+        collect: [],
+        userId: null,
+        tags: [],
+        detailContentInfo: [],
+        tagItemInfo: [],
+        songSheets: [],
+        songSheetInfo: [],
+        songSheetItemInfo:[],
+        PlayMusicList: [],
+        loadingTags: false,
+        loadingCollect: false,
+        loadingSongSheet: false,
+        loadingSongSheetItem: false,
+        loadingDetailContentInfo: false,
+        loadingPlayMusic: false
+    }
+}
+
+
 const rootReducer = combineReducers({
-  router: routerReducer
+    router: routerReducer,
+    home: HomeReducer,
+    user: UserReducer,
 });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
 

@@ -1,277 +1,233 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { bindActionCreators } from 'redux';
 import Logo from '../../resourses/imgs/logo.png';
 import './Home.less';
-import { songNew } from '../../resourses/data/HomeData';
+import { getNewSong, getHotSong, getMayBeLike, getRecommend } from '../../actions/HomeAction';
+import { getCollect, addCollect, cancelCollect } from '../../actions/UserAction';
+import { initialState } from '../../store';
+import {getCookie} from '../../lib/fun';
 import {
     Layout, Menu, Icon, Row, Col, Card, Input,
-    Pagination, Popover
+    Pagination, Popover, message
 } from 'antd';
+import MyHeader from '../../components/MyHeader/MyHeader';
+import LeftNav from '../../components/LeftNav/LeftNav';
 
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.MenuItemGroup;
 const Search = Input.Search;
 
 class Home extends React.Component {
     constructor(props) {
+        console.log('CONSTRUC')
         super(props)
         this.state = {
-            defaultOpenKeys: ['sub1', 'sub2'],
-            loadinghot: true,
-            value: 1
+            newSong: [],
+            hotSong: [],
+            mayLikeSong: [],
+            recommendSong: [],
+            loadingNewSong: true,
         };
     }
-
-    handleSearch(e) {
-        console.log(123, e);
-    }
-
     componentDidMount() {
-        axios.get('/sss').then(function (res) {
-            console.log('请求得到数据');
-            console.log(res);
-        }).catch(err => {
-        })
+
+        this.props.getNewSong();
+        this.props.getHotSong()
+        this.props.getMayBeLike();
+        this.props.getRecommend();
+        // axios.get('/recommendation').then(res => {
+        //     console.log(res);
+        //     this.setState({
+        //         recommendSong: res.data
+        //     })
+        // }).catch(err => {
+
+        // })
     }
+
     render() {
-
-        setTimeout(() => {
-            this.setState({
-                loadingnew: false,
-                loadinghot: false
-            })
-        }, 1000);
+        var {newSong, hotSong, mayBeLike, userId, recommendSong } = this.props;
+        var { mayLikeSong } = this.state;
+        var user_id = getCookie('user_id');
         return (
-            <Layout style={{ minHeight: '100vh', marginLeft: 300 }} >
-                <Layout>
-                    <Header style={{ background: '#fff' }}>
-                        <Row gutter={8}>
-                            <Col span={4}>
-                                <div className="logo-wrap">
-                                    <img src={Logo} />
-                                </div>
-                            </Col>
-                            <Col span={8}>
-                                <Search
-                                    placeholder="输入歌名"
-                                    onSearch={value => console.log(value)}
-                                    style={{ width: 200 }}
-                                    onPressEnter={this.handleSearch.bind(this)}
-                                    size="large"
-                                    enterButton
-                                    style={{ width: '400px' }}
-                                />
-                            </Col>
-                        </Row>
-                    </Header>
-                    <Content style={{ margin: '16px' }}>
-                        <Row gutter={8}>
-                            <Col span={8} hoverable="true">
-                                <Card title="新歌首发" extra={<a href="#">More</a>} loading={this.state.loadingnew}>
-                                    <Row type="flex" justify="space-between" style={{ height: "50px" }}>
-                                        <Col span={21}>
-                                            <span>
-                                                Fall Out Boy - Immortals - End Credit版
-                                        </span>
-                                        </Col>
-                                        <Col span={3}>
-                                            <Icon type="play-circle-o" />
-                                        </Col>
-                                    </Row>
+            <Layout style={{ minHeight: '100vh'}} >
+                <LeftNav></LeftNav>
+                <Layout style={{ minHeight: '100vh'}} >
+                    <MyHeader></MyHeader>
+                    <Content>
+                        <Row gutter={8}   >
+                            <Col span={8} hoverable="true" >
+                                <Card title="新歌首发" extra={<a href="#">More</a>}>
                                     {
-                                        songNew.map((item, index) => {
-                                            return <Row type="flex" justify="space-between5" style={{ height: "50px" }}
+                                
+                                        newSong.map((item, index) => {
+                                            return <Row type="flex" className="song-item"
                                                 key={index}>
-                                                <Col span={21}>
-                                                    <span>
-                                                        {item.name}
+                                                <Col span={4} >
+                                                    <img
+                                                        src={`${item.cover_img}`}
+                                                        className="song-img-small" />
+                                                </Col>
+                                                <Col span={13} >
+                                                    <span style={{ color: '#222' }} >
+                                                        {item.title}
                                                     </span>
                                                 </Col>
-                                                <Col span={3}>
-                                                    <Icon type="play-circle-o" />
+                                                <Col span={2} offset={2}  >
+                                                    <Icon type="play-circle-o" style={{ fontSize: 16, color: 'rgb(24,144,255)' }}
+                                                        onClick={
+                                                            e => {
+                                                                {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.localStorage.currentSong = JSON.stringify(item);
+                                                                window.localStorage.currentSongList = JSON.stringify(newSong);
+                                                                window.localStorage.currentSongIndex = index;
+                                                            }
+                                                        }
+                                                    />
+                                                </Col>
+                                                <Col span={2} offset={1} >
+                                                    <Icon type="heart" style={{ fontSize: 16 }}
+                                                        className={item.like ? "red-heart" : "white-heart"}
+                                                        onClick={e => {
+                                                            if (!user_id) {
+                                                                message.warn('先登陆再收藏')
+                                                                return;
+                                                            }
+                                                            if (item.like) {
+                                                                this.props.cancelCollect( item.song_id)
+                                                            } else {
+                                                                this.props.addCollect( item.song_id)
+                                                            }
+                                                        }} />
                                                 </Col>
                                             </Row>
-
-                                        })
-                                    }
-
-                                </Card>
-                            </Col>
-                            <Col span={8}>
-                                <Card title="热歌榜单" extra={<a href="#">More</a>} loading={this.state.loadinghot}>
-                                    {
-                                        songNew.map((item, index) => {
-                                            return <Row type="flex" justify="space-between5" style={{ height: "50px" }}
-                                                key={index}>
-                                                <Col span={21}>
-                                                    <span>
-                                                        {item.name}
-                                                    </span>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Icon type="play-circle-o" />
-                                                </Col>
-                                            </Row>
-
                                         })
                                     }
                                 </Card>
                             </Col>
                             <Col span={8}>
-                                <Card title="热歌榜单" extra={<a href="#">More</a>} loading={this.state.loadinghot}>
+                                <Card title="热歌榜单" extra={<a href="#">More</a>}>
                                     {
-                                        songNew.map((item, index) => {
-                                            return <Row type="flex" justify="space-between5" style={{ height: "50px" }}
-                                                key={index}>
-                                                <Col span={21}>
-                                                    <span>
-                                                        {item.name}
+                                        hotSong.map((item, index) => {
+                                            return <Row
+                                                key={index} className="song-item" >
+                                                <Col span={4} >
+                                                    <img
+                                                        src={`${item.cover_img}`}
+                                                        className="song-img-small" />
+                                                </Col>
+                                                <Col span={13}>
+                                                    <span style={{ color: '#222' }} >
+                                                        {item.title}
                                                     </span>
                                                 </Col>
-                                                <Col span={3}>
-                                                    <Icon type="play-circle-o" />
+                                                <Col span={2} offset={1}>
+                                                    <Icon type="play-circle-o" style={{ fontSize: 16, color: 'rgb(24,144,255)' }}
+                                                        onClick={
+                                                            e => {
+                                                                {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.localStorage.currentSong = JSON.stringify(item);
+                                                                window.localStorage.currentSongList = JSON.stringify(hotSong);
+                                                                window.localStorage.currentSongIndex = index;
+                                                            }
+                                                        }
+                                                    />
+                                                </Col>
+                                                <Col span={2} offset={1} >
+                                                    {
+                                                        item.like ?
+                                                            <Icon type="heart" style={{ fontSize: 16, color: '#fa541c' }}
+                                                                onClick={e => {
+                                                                    this.props.cancelCollect( item.song_id)
+
+                                                                }} />
+                                                            :
+                                                            <Icon type="heart-o"
+                                                                onClick={e => { 
+                                                                    if (!user_id) {
+                                                                        message.warn('先登陆再收藏')
+                                                                        return;
+                                                                    }
+                                                                    this.props.addCollect( item.song_id)
+                                                                }} />
+                                                    }
                                                 </Col>
                                             </Row>
-
                                         })
                                     }
                                 </Card>
                             </Col>
-                        </Row>
-                        <Row>
-                            <Col span={6}>
-                                <Card
-                                    hoverable="true"
-                                    style={{ width: 240 }}
-                                    cover={<img alt="example"
-                                        src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                                >
-                                    <Card.Meta
-                                        title="Europe Street beat"
-                                        description="www.instagram.com"
-                                    />
-                                </Card>
-                            </Col>
-
-                            <Col span={6}>
-                                <Card
-                                    hoverable="true"
-                                    style={{ width: 240 }}
-                                    cover={<img alt="example"
-                                        src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                                >
-                                    <Card.Meta
-                                        title="Europe Street beat"
-                                        description="www.instagram.com"
-                                    />
-                                </Card>
-                            </Col>
-
-                            <Col span={6}>
-                                <Card
-                                    hoverable="true"
-                                    style={{ width: 240 }}
-                                    cover={<img alt="example"
-                                        src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                                >
-                                    <Card.Meta
-                                        title="Europe Street beat"
-                                        description="www.instagram.com"
-                                    />
-                                </Card>
-                            </Col>
-
-                            <Col span={6}>
-                                <Card
-                                    hoverable="true"
-                                    style={{ width: 240 }}
-                                    cover={<img alt="example"
-                                        src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                                >
-                                    <Card.Meta
-                                        title="Europe Street beat"
-                                        description="www.instagram.com"
-                                    />
+                            <Col span={8}>
+                                <Card title="猜你喜欢" extra={<a href="#">More</a>}>
+                                    {
+                                        mayBeLike.map((item, index) => {
+                                            return <Row
+                                                key={index} className="song-item" >
+                                                <Col span={4} >
+                                                    <img
+                                                        src={`${item.cover_img}`}
+                                                        className="song-img-small" />
+                                                </Col>
+                                                <Col span={15}>
+                                                    <span style={{ color: '#222' }} >
+                                                        {item.title}
+                                                    </span>
+                                                </Col>
+                                                <Col span={2} offset={2} >
+                                                    <Icon type="play-circle-o" style={{ fontSize: 16, color: 'rgb(24,144,255)' }}
+                                                        onClick={
+                                                            e => {
+                                                                {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.localStorage.currentSong = JSON.stringify(item);
+                                                                window.localStorage.currentSongList = JSON.stringify(mayBeLike);
+                                                                window.localStorage.currentSongIndex = index;
+                                                            }
+                                                        }
+                                                    />
+                                                </Col>
+                                            </Row>
+                                        })
+                                    }
                                 </Card>
                             </Col>
                         </Row>
-                        <Row>
-                            <Col span={12} offset={6}>col-12 col-offset-6</Col>
-                        </Row>
-                        <Row gutter={8}>
-                            <Col span={8} hoverable="true">
-                                <Card title="新歌首发" extra={<a href="#">More</a>} loading={this.state.loadingnew}>
-                                    <Row type="flex" justify="space-between" style={{ height: "50px" }}>
-                                        <Col span={21}>
-                                            <span>
-                                                Fall Out Boy - Immortals - End Credit版
-                                        </span>
+
+                        <Row className="dujia" type="flex" justify="space-between" align="top" >
+                            {
+                                recommendSong.map((item, index) => {
+                                    if (index < 8) {
+                                        return <Col span={3} key={index}  >
+                                            <Card
+                                                hoverable="true"
+                                                style={{ width: 'auto' }}
+                                                cover={<img alt="example"
+                                                    src={`${item.cover_img}`}
+                                                    onClick={
+                                                        e => {
+                                                                {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.localStorage.currentSong = JSON.stringify(item);
+                                                                window.localStorage.currentSongList = JSON.stringify(recommendSong);
+                                                                window.localStorage.currentSongIndex = index;
+                                                            }
+                                                    }
+                                                />}
+                                            >
+                                                <Card.Meta
+                                                    title={item.title}
+                                                    description={item.author}
+                                                />
+                                            </Card>
                                         </Col>
-                                        <Col span={3}>
-                                            <Icon type="play-circle-o" />
-                                        </Col>
-                                    </Row>
-                                    {
-                                        songNew.map((item, index) => {
-                                            return <Row type="flex" justify="space-between5" style={{ height: "50px" }}
-                                                key={index}>
-                                                <Col span={21}>
-                                                    <span>
-                                                        {item.name}
-                                                    </span>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Icon type="play-circle-o" />
-                                                </Col>
-                                            </Row>
-
-                                        })
                                     }
-
-                                </Card>
-                            </Col>
-                            <Col span={8}>
-                                <Card title="热歌榜单" extra={<a href="#">More</a>} loading={this.state.loadinghot}>
-                                    {
-                                        songNew.map((item, index) => {
-                                            return <Row type="flex" justify="space-between5" style={{ height: "50px" }}
-                                                key={index}>
-                                                <Col span={21}>
-                                                    <span>
-                                                        {item.name}
-                                                    </span>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Icon type="play-circle-o" />
-                                                </Col>
-                                            </Row>
-
-                                        })
-                                    }
-                                </Card>
-                            </Col>
-                            <Col span={8}>
-                                <Card title="热歌榜单" extra={<a href="#">More</a>} loading={this.state.loadinghot}>
-                                    {
-                                        songNew.map((item, index) => {
-                                            return <Row type="flex" justify="space-between5" style={{ height: "50px" }}
-                                                key={index}>
-                                                <Col span={21}>
-                                                    <span>
-                                                        {item.name}
-                                                    </span>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Icon type="play-circle-o" />
-                                                </Col>
-                                            </Row>
-
-                                        })
-                                    }
-                                </Card>
-                            </Col>
+                                })
+                            }
                         </Row>
                     </Content>
                 </Layout>
@@ -280,10 +236,26 @@ class Home extends React.Component {
     }
 }
 
-const mapStateToProps = function (store) {
+const mapStateToProps = function (store = initialState) {
     return {
-        planlist: store.planlist
+        newSong: store.home.newSong || [],
+        hotSong: store.home.hotSong || [],
+        collect: store.user.collect || [],
+        userId: store.user.userId,
+        mayBeLike: store.home.mayBeLike || [],
+        recommendSong: store.home.recommendSong || []
     };
 };
 
-export default connect(mapStateToProps)(Home);
+const mapDispatchToProps = dispatch => ({
+    getNewSong: bindActionCreators(getNewSong, dispatch),
+    getCollect: bindActionCreators(getCollect, dispatch),
+    addCollect: bindActionCreators(addCollect, dispatch),
+    getHotSong: bindActionCreators(getHotSong, dispatch),
+    getMayBeLike: bindActionCreators(getMayBeLike, dispatch),
+    cancelCollect: bindActionCreators(cancelCollect, dispatch),
+    getRecommend: bindActionCreators(getRecommend,dispatch)
+
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
