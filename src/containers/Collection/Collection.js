@@ -113,7 +113,7 @@ class Collection extends React.Component {
                                                     onClick={
                                                         e => {
                                                             {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
-                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}&type=${item.type}`;
                                                                 window.localStorage.currentSong = JSON.stringify(item);
                                                                 window.localStorage.currentSongList = JSON.stringify(collect);
                                                                 window.localStorage.currentSongIndex = index;

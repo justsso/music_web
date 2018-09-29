@@ -5,6 +5,8 @@
     canvas.width=$('body').width();
     canvas.height=$(window).height()-80;
     var ctx = canvas.getContext("2d");
+
+
     var outcanvas = document.createElement("canvas");
     outcanvas.width = canvas.width;
     outcanvas.height = canvas.height ;
@@ -64,14 +66,59 @@
 
         //最终输出到音频播放器
         gainnode.connect(AC.destination);
+        addRecord();
     }
+    function addRecord() {
+        var url = "/add_record?";
+        //获取user_id song_id type
+        var user_id = getUserInfo();
+        var song_id  = getParameterByName('song_id');
+        var type = getParameterByName('type');
+
+        $.ajax({
+            type: 'get',
+            url: url +"user_id="+user_id+"&song_id="+song_id+"&type2="+type,
+            async: true,
+            success: function (res) {
+                console.log(res);
+            }
+            ,
+            error: function () {
+            }
+        })
+    }
+    function getUserInfo() {
+        if (document.cookie.length > 0) {
+            var c_start, c_end;
+            c_start = document.cookie.indexOf("user_id" + '=')
+            if (c_start != -1) {
+                c_start = c_start +"user_id".length + 1
+                c_end = document.cookie.indexOf('; ', c_start)
+                if (c_end == -1) c_end = document.cookie.length
+                return  unescape( document.cookie.substring(c_start, c_end));
+            }
+        }
+        return ''
+    }
+    function getParameterByName(name, url) {
+        if (!url)
+            url = window.location.href;
+        name = name.replace(/[[\]]/g, "\\$&");
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results)
+            return null;
+        if (!results[2])
+            return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    };
 
     //绘制音谱的参数
     var rt_array = [],	        //用于存储顶部小红框的
         rt_length = 120;		//规定有多少个柱形条
 
     var arc_array=[];
-    var arcNumber=1024;
+    var arcNumber=512;
     var grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
     grd.addColorStop(0, "#30cfd0");
     grd.addColorStop(0.3, "#30cfd0");
@@ -104,7 +151,7 @@
         if (t%2==0){
             analyser.getByteFrequencyData(array);	//将音频节点的数据拷贝到Uin8Array中
         }else{
-            analyser.getByteTimeDomainData(array);	//将音频节点的数据拷贝到Uin8Array中
+            analyser.getByteTimeDomainData(array);	//将时域节点的数据拷贝到Uin8Array中
         }
         if (b==1){
             //数组长度与画布宽度比例
@@ -113,7 +160,7 @@
             for (var i = 0; i < rt_array.length; i++) {
                 var rt = rt_array[i];
                 //根据比例计算应该获取第几个频率值，并且缓存起来减少计算
-                rt.index = ('index' in rt) ? rt.index : ~~(rt.x * bili);
+                rt.index = ('index' in rt) ? rt.index : ~~(rt.x * bili);  //转换成数字类型
                 rt.update(array[rt.index]);
             }
             ctx.drawImage(outcanvas, 0, 0);
@@ -146,7 +193,7 @@
         actx.beginPath();
         actx.arc(this.x,this.y,this.r,0,4*Math.PI,true);
         actx.closePath();
-        actx.strokeStyle="rgb(128,128,"+this.r+")";
+        actx.strokeStyle="rgb(148,128,"+this.r+")";
         actx.stroke();
     }
 
@@ -191,11 +238,17 @@
         //     //octx.clearRect(this.x - 1, y, this.w + 2, this.jg);
         // }
         octx.fillStyle = "#950000";
+        // #30cfd0
         octx.fillRect(this.x, this.dy, this.w, this.h);
     };
     initAnimation();
     playMusic(myAudio);
-    $('#button').click(function(){
-        t++;
+    $('#button').click(function(e){
+        // t++;
+        if(b===1){
+            b = 2
+        }else if(b === 2){
+            b = 1
+        }
     })
 }());

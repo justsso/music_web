@@ -51,8 +51,11 @@ class Register extends React.Component {
     validateUserId = (rule, value, callback) => {
         console.log(rule, value);
         console.log('用户名校验');
+        if(value && value.match(/[^\x00-\xff]/)){
+            callback('非中文')
+        }
         if ( (value && value.length > 10) || (value &&  value.length < 3)) {
-            callback('英文或数字3-10位')
+            callback('3-10位')
         }
         callback()
 
@@ -61,7 +64,10 @@ class Register extends React.Component {
         const form = this.props.form;
         if ( value&& value.length < 5) {
             callback('密码不能少于5位')
-        } else {
+        }else if(value && value.match(/[^\x00-\xff]/)){
+            callback('不能有中文！')
+            return 
+        }else {
             if (value && this.state.confirmDirty) {
                 form.validateFields(['confirm'], { force: true });
             }

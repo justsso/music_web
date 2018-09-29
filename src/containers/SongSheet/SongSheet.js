@@ -97,7 +97,7 @@ class SongSheet extends React.Component {
                                     <Icon type="eye-o" onClick={e=> { 
                                         window.location.hash = `/content?type=songsheet&tag_name=${item.song_sheet_name}`
                                     }} />, 
-                                    <Icon type="edit" />, 
+                                   
                                     <Icon type="delete" onClick={ e => {
                                         Modal.confirm({
                                             title: '确认删除该歌单',

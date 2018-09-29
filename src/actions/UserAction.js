@@ -4,7 +4,7 @@ import {
     message
 } from 'antd';
 import { getNewSong, getHotSong, getMayBeLike } from './HomeAction';
-
+import{ setCookie} from '../lib/fun';
 // 添加收藏
 export const addCollect = (song_id) => {
     const url = `/add_collect?song_id=${song_id}`;
@@ -265,6 +265,7 @@ export const login = (user_id, password) => {
     return dispatch => {
         axios.get(url).then(res => {
             if (res.data.code === true) {
+                setCookie('user_id',user_id)
                 message.success('登陆成功');
                 dispatch({
                     type: 'LOAD_SUC',
@@ -307,4 +308,32 @@ export const register = (user_id,password,email) => {
 
 export const updateUser = () => {
 
+}
+export const deleteSFromTag = (user_id,song_id,tag_name) => {
+    var url = `/delete_s_from_tag?user_id=${user_id}&song_id=${song_id}&tag_name=${tag_name}`;
+    return dispatch => {
+        axios.get(url).then( res => {
+            console.log(res);
+            if(res.data.code ){
+                message.success('删除成功');
+                dispatch(getTagItemInfo(user_id,tag_name))
+            }else {
+                message.warn('删除失败')
+            }
+        })
+    }
+}
+
+export const deleteSFromSongSheet = (user_id, song_id, song_sheet_name) => {
+    var url = `/delete_s_from_songsheet?user_id=${user_id}&song_id=${song_id}&song_sheet_name=${song_sheet_name}`;
+    return dispatch => {
+        axios.get(url).then( res => {
+            if(res.data.code ){
+                message.success('删除成功');
+                dispatch(getSongSheetDetail(user_id,song_sheet_name))
+            }else {
+                message.warn('删除失败')
+            }
+        })
+    }
 }

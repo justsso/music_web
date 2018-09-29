@@ -104,7 +104,7 @@ class Tags extends React.Component {
                                     <Icon type="eye-o" onClick={e=> { 
                                         window.location.hash = `/content?type=tag&tag_name=${item.tag_name}`
                                     }} />, 
-                                    <Icon type="edit" />, 
+                                     
                                     <Icon type="delete" onClick={
                                         (e, tag_name)  => {
 
@@ -119,6 +119,7 @@ class Tags extends React.Component {
                                                         resolve()
                                                     }, 100);
                                                     var user_id = getCookie('user_id');
+                                                    console.log(user_id)
                                                     this.props.deleteTag(user_id, item.tag_name)
                                                 }).catch(err=> {
 
@@ -148,6 +149,7 @@ class Tags extends React.Component {
                                         console.log(this)
                                         const tag_name = e.target.value;
                                         const user_id = getCookie('user_id');
+                                        console.log(user_id)
                                       console.log(this.isHave(tag_name))
                                         if( this.isHave(tag_name) === -1 ){
                                             this.props.addTag(user_id, tag_name)

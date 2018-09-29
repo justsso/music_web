@@ -52,15 +52,15 @@ function addUserList(song_sheet_name,song_id) {
         url: url +"song_sheet_name="+song_sheet_name+"&user_id="+user+"&song_id="+song_id,
         async: true,
         success: function (res) {
-
             console.log(res);
-            if (res){
+            if (res.code === '0'){
                 alert("添加成功");
+            }else if(res.code === '1'){
+                alert('该歌曲已经存在')
             }
         }
         ,
         error: function () {
-
         }
     })
 }
@@ -72,10 +72,11 @@ function addUserTag(tag_name,song_id) {
         url: url +"tag_name="+tag_name+"&user_id="+user+"&song_id="+song_id,
         async: true,
         success: function (res) {
-
             console.log(res);
-            if (res){
+            if (res.code === '0'){
                 alert("添加成功");
+            }else if(res.code === '1'){
+                alert('该歌曲已经存在')
             }
         }
         ,

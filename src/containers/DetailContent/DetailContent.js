@@ -5,18 +5,19 @@ import { bindActionCreators } from 'redux';
 import { initialState } from '../../store';
 import './DetailContent.less';
 import {
-    Layout, Icon, List, Avatar, Row, Col, Button, Card, Spin,
+    Layout, Icon, List, Avatar, Row, Col, Button, Card, Spin,Modal
 } from 'antd';
 import MyHeader from '../../components/MyHeader/MyHeader';
 import LeftNav from '../../components/LeftNav/LeftNav';
 
-import { getTagItemInfo, getSongSheetDetail } from '../../actions/UserAction';
+import { getTagItemInfo, 
+        getSongSheetDetail,
+        deleteSFromTag,
+        deleteSFromSongSheet } 
+    from '../../actions/UserAction';
 import { getParameterByName, getCookie } from '../../lib/fun';
-
-
+const confirm = Modal.confirm;
 const { Header, Content, Footer, Sider } = Layout;
-
-
 class DetailContent extends React.Component {
 
     constructor(props) {
@@ -41,6 +42,32 @@ class DetailContent extends React.Component {
             var user_id = getCookie('user_id');
             this.props.getSongSheetDetail(user_id, tag_name)
         }
+    }
+    showConfirm(song_id) {
+        let that = this;
+        console.log(song_id);
+        let s = song_id;
+        var tag_name = getParameterByName('tag_name');
+        var type = getParameterByName('type');
+        confirm({
+            title: '删除歌曲?',
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    setTimeout(resolve, 100);
+                }).then((args) => {
+                    // that.props.cancelCollect( s )
+                    // 从歌单中或者从标签中删除
+                    var user_id = getCookie('user_id');
+                    if(type === 'tag'){
+                        that.props.deleteSFromTag(user_id,song_id,tag_name)
+                    }else if(type === 'songsheet'){
+                        that.props.deleteSFromSongSheet(user_id,song_id,tag_name)
+                    }
+                }).catch((err) =>
+                    console.log('Oops errors!', err));
+            },
+            onCancel() { },
+        });
     }
 
     render() {
@@ -87,7 +114,10 @@ class DetailContent extends React.Component {
                                         <Icon type="play-circle-o" style={{ fontSize: 16, color: 'rgb(24,144,255)' }}
                                             onClick={
                                                 e => {
-                                                    window.location.hash = `playmusic?song_id=${item.song_id}`
+                                                    window.location.href = `/audio.html?song_id=${item.song_id}&type=${item.type}`;
+                                                    window.localStorage.currentSong = JSON.stringify(item);
+                                                    window.localStorage.currentSongList = JSON.stringify(detailContentInfo);
+                                                    window.localStorage.currentSongIndex = index;
                                                 }
                                             }
                                         />
@@ -95,7 +125,7 @@ class DetailContent extends React.Component {
                                     <Col span={1} >
                                         <Icon type="delete" style={{ fontSize: 16, color: '#666' }}
                                             onClick={
-                                                this.showConfirm
+                                                this.showConfirm.bind(this, item.song_id)
                                             }
                                         />
                                     </Col>
@@ -115,8 +145,6 @@ const mapStateToProps = function (store = initialState) {
     return {
         userId: store.user.userId,
         tagItemInfo: store.user.tagItemInfo|| [],
-        songSheetItemInfo: store.user.songSheetItemInfo || [],
-        loadingSongSheetItem: store.user.loadingSongSheetItem,
         detailContentInfo: store.user.detailContentInfo || [],
         loadingDetailContentInfo: store.user.loadingDetailContentInfo
     };
@@ -124,7 +152,9 @@ const mapStateToProps = function (store = initialState) {
 
 const mapDispatchToProps = dispatch => ({
     getTagItemInfo: bindActionCreators(getTagItemInfo, dispatch),
-    getSongSheetDetail: bindActionCreators(getSongSheetDetail, dispatch)
+    getSongSheetDetail: bindActionCreators(getSongSheetDetail, dispatch),
+    deleteSFromTag: bindActionCreators(deleteSFromTag,dispatch),
+    deleteSFromSongSheet: bindActionCreators(deleteSFromSongSheet,dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetailContent);

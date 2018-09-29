@@ -44,11 +44,6 @@
         //最终输出到音频播放器
         gainnode.connect(AC.destination);
     }
-
-
-
-
-
     playMusic(myAudio);
 
 }());

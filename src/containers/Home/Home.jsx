@@ -60,7 +60,7 @@ class Home extends React.Component {
                     <Content>
                         <Row gutter={8}   >
                             <Col span={8} hoverable="true" >
-                                <Card title="新歌首发" extra={<a href="#">More</a>}>
+                                <Card title="新歌首发" extra={<a href="#"></a>}>
                                     {
                                 
                                         newSong.map((item, index) => {
@@ -81,7 +81,7 @@ class Home extends React.Component {
                                                         onClick={
                                                             e => {
                                                                 {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
-                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}&type=${item.type}`;
                                                                 window.localStorage.currentSong = JSON.stringify(item);
                                                                 window.localStorage.currentSongList = JSON.stringify(newSong);
                                                                 window.localStorage.currentSongIndex = index;
@@ -110,7 +110,7 @@ class Home extends React.Component {
                                 </Card>
                             </Col>
                             <Col span={8}>
-                                <Card title="热歌榜单" extra={<a href="#">More</a>}>
+                                <Card title="热歌榜单" extra={<a href="#"></a>}>
                                     {
                                         hotSong.map((item, index) => {
                                             return <Row
@@ -129,8 +129,8 @@ class Home extends React.Component {
                                                     <Icon type="play-circle-o" style={{ fontSize: 16, color: 'rgb(24,144,255)' }}
                                                         onClick={
                                                             e => {
-                                                                {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
-                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}&type=${item.type}`;
                                                                 window.localStorage.currentSong = JSON.stringify(item);
                                                                 window.localStorage.currentSongList = JSON.stringify(hotSong);
                                                                 window.localStorage.currentSongIndex = index;
@@ -163,9 +163,11 @@ class Home extends React.Component {
                                 </Card>
                             </Col>
                             <Col span={8}>
-                                <Card title="猜你喜欢" extra={<a href="#">More</a>}>
+                                <Card title="猜你喜欢" extra={<a href="#"></a>}>
                                     {
                                         mayBeLike.map((item, index) => {
+                                            if(index < 6){
+
                                             return <Row
                                                 key={index} className="song-item" >
                                                 <Col span={4} >
@@ -183,7 +185,7 @@ class Home extends React.Component {
                                                         onClick={
                                                             e => {
                                                                 {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
-                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}&type=${item.type}`;
                                                                 window.localStorage.currentSong = JSON.stringify(item);
                                                                 window.localStorage.currentSongList = JSON.stringify(mayBeLike);
                                                                 window.localStorage.currentSongIndex = index;
@@ -192,6 +194,7 @@ class Home extends React.Component {
                                                     />
                                                 </Col>
                                             </Row>
+                                            }
                                         })
                                     }
                                 </Card>
@@ -211,7 +214,7 @@ class Home extends React.Component {
                                                     onClick={
                                                         e => {
                                                                 {/* window.location.hash = `playmusic?song_id=${item.song_id}`; */}
-                                                                window.location.href = `/audio.html?song_id=${item.song_id}`;
+                                                                window.location.href = `/audio.html?song_id=${item.song_id}&type=${item.type}`;
                                                                 window.localStorage.currentSong = JSON.stringify(item);
                                                                 window.localStorage.currentSongList = JSON.stringify(recommendSong);
                                                                 window.localStorage.currentSongIndex = index;

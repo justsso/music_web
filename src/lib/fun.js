@@ -7,8 +7,6 @@ const handleDate = (d) => {
     let y = date.getFullYear();
     let m = date.getMonth() + 1;
     let dt = date.getDate();
-
-
     return `${y}/${m}/${dt}`;
 }
 const getParameterByName = (name, url) => {
@@ -42,7 +40,7 @@ const setCookie = (cname, cvalue, exdays = 1) => {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + "; " + expires;
+    document.cookie = cname + "=" + escape(cvalue) + "; " + expires;
 
 }
 
